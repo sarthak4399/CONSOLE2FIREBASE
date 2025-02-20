@@ -90,7 +90,7 @@ def hand_touches(team_id):
             "action": "setHandTouch",
             "data": {
                     "teamId": team_id,
-                     "increment":False
+                     "increment":""
                     }
         })
         team = response.json()
@@ -117,7 +117,7 @@ def getTeamId():
 
     
 @app.route('/data', methods=['POST'])
-def receive_data():
+def receive_data(increment):
     """
     Endpoint to receive data from ESP device.
     Data is expected to be in JSON format.
@@ -129,7 +129,7 @@ def receive_data():
             "action": "setCheckPoints",
             "data": {
                     "teamId": currentTeam,
-                     "increment":False,
+                     "increment":increment,
                      "checkPoints": data
                     }
         })
@@ -144,4 +144,4 @@ def receive_data():
         return jsonify({"status": "error", "message": str(e)}), 400
     
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.243.120')
+    app.run(debug=True, host='192.0.0.2')

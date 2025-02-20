@@ -1,11 +1,8 @@
-{% block title %}{{ team.name }} Details{% endblock %}
-
-{% block content %}
 <script>
     function refreshTeamData() {
         const teamId = '{{ team.data[1] }}';  // Get team ID from template
         
-        fetch(`http://192.168.243.120:5000/team/api/${teamId}`)
+        fetch(`http://192.0.0.2:5000/team/api/${teamId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -16,7 +13,7 @@
                 console.log('Received data:', data); // Debug log
 
                 // Update metrics
-                document.getElementById('handTouches').textContent = data.data[2];
+                document.getElementById('handTouchesValue').textContent = data.data[2];
                 document.getElementById('totalTime').textContent = data.data[3];
                 document.getElementById('totalScore').textContent = data.data[4];
 
@@ -52,13 +49,48 @@
             });
     }
 
+    // New function to update hand touches using POST request
+    function updateHandTouches(state) {
+        const teamId = '{{ team.data[1] }}';
+        fetch(`http://192.0.0.2:5000/team/${teamId}/hand_touches`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'setHandTouch',
+                data: {
+                    teamId: teamId,
+                    increment: state
+                }
+            })
+        })
+        .then(response => {
+            console.warn('Hand touches updated:', data);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Hand touches updated:', data);
+            // Optionally, refresh the dashboard after updating
+            refreshTeamData();
+        })
+        .catch(error => {
+            console.error('Error updating hand touches:', error);
+        });
+    }
+
     // Start refreshing when the page loads
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Starting refresh cycle...'); // Debug log
         refreshTeamData(); // Initial refresh
-        setInterval(refreshTeamData, 2000); // Refresh every 5 seconds
+        setInterval(refreshTeamData, 2000); // Refresh every 2 seconds
     });
 </script>
+
 <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; font-family: 'Segoe UI', system-ui, sans-serif;">
     <!-- Header Section -->
     <div style="margin-bottom: 2.5rem;">
@@ -83,16 +115,26 @@
         {% else %}
         <!-- Key Metrics Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+            <!-- Hand Touches Card with + and - buttons -->
             <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4299e1;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                     <svg style="width: 24px; height: 24px; color: #4299e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
-                    <span id="handTouches" style="font-size: 0.875rem; color: #718096;">Hand Touches</span>
+                    <span style="font-size: 0.875rem; color: #718096;">Hand Touches</span>
                 </div>
-                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">{{ team.data[2] }}</div>
+                <!-- Display the current hand touches value -->
+                <div id="handTouchesValue" style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+                    {{ team.data[2] }}
+                </div>
+                <!-- Buttons to increment/decrement hand touches -->
+                <div style="margin-top: 0.5rem;">
+                    <button onclick="updateHandTouches(true)" style="padding: 0.5rem 1rem; margin-right: 0.5rem; background: #48bb78; color: white; border: none; border-radius: 4px; cursor: pointer;">+</button>
+                    <button onclick="updateHandTouches(false)" style="padding: 0.5rem 1rem; background: #f56565; color: white; border: none; border-radius: 4px; cursor: pointer;">–</button>
+                </div>
             </div>
 
+            <!-- Total Time Card -->
             <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #48bb78;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                     <svg style="width: 24px; height: 24px; color: #48bb78;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,17 +142,22 @@
                     </svg>
                     <span style="font-size: 0.875rem; color: #718096;" id="totalTime">Total Time</span>
                 </div>
-                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">{{ team.data[3] }}</div>
+                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+                    {{ team.data[3] }}
+                </div>
             </div>
 
+            <!-- Total Score Card -->
             <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #9f7aea;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                     <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span style="font-size: 0.875rem; color: #718096;" id="totalScore" >Total Score</span>
+                    <span style="font-size: 0.875rem; color: #718096;" id="totalScore">Total Score</span>
                 </div>
-                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">{{ team.data[4] }}</div>
+                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+                    {{ team.data[4] }}
+                </div>
             </div>
         </div>
 
@@ -122,7 +169,6 @@
                 </svg>
                 Checkpoint Status
             </h2>
-            
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
                 {% for i in range(5, 10) %}
                 <div id="checkpoint-{{ i-4 }}" style="background: {{ '#f0fff4' if team.data[i] == 1 else '#fff5f5' }};">
@@ -158,4 +204,3 @@
         {% endif %}
     </div>
 </div>
-{% endblock %}
