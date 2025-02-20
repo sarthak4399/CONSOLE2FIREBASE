@@ -1,118 +1,236 @@
-<div style="background: #f8f9fa; min-height: 100vh; color: #2d2d2d; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px 20px;">
-    <!-- Header Section -->
-    <div style="background: #ffffff; 
-               padding: 3rem 0; 
-               margin-bottom: 2rem;
-               box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-               border-bottom: 1px solid #e9ecef;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <h1 style="margin: 0; 
-                      font-size: 2.2rem; 
-                      font-weight: 600; 
-                      color: #5e72e4;
-                      text-align: center;
-                      letter-spacing: -0.5px;">
-                Team Directory
-            </h1>
-        </div>
-    </div>
-
-    <div style="max-width: 1200px; margin: 0 auto;">
-        {% if error %}
-        <div style="background: #fff5f5; 
-                   color: #cc0033; 
-                   padding: 1.25rem; 
-                   border-radius: 8px; 
-                   margin-bottom: 2rem;
-                   border: 1px solid #ffcccc;
-                   display: flex;
-                   align-items: center;">
-            <svg style="width: 20px; height: 20px; margin-right: 12px;" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-            </svg>
-            {{ error }}
-        </div>
-        {% else %}
-        <div style="background: #ffffff; 
-                  border-radius: 12px; 
-                  padding: 2rem; 
-                  box-shadow: 0 4px 6px rgba(50,50,93,.04),
-                             0 1px 3px rgba(0,0,0,.08);">
-            <!-- Team Grid -->
-            <div style="display: grid; 
-                      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                      gap: 1.5rem; 
-                      margin-bottom: 2rem;">
-                {% for team in teams.data %}
-                <div style="background: #ffffff; 
-                          padding: 1.5rem; 
-                          border-radius: 8px;
-                          border: 1px solid #e9ecef;
-                          transition: all 0.2s ease;
-                          position: relative;
-                          overflow: hidden;">
-                    <a href="{{ url_for('team_detail', team_id=team)}}" 
-                       style="color: #525f7f; 
-                            text-decoration: none; 
-                            font-size: 1.1rem;
-                            font-weight: 500;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            transition: color 0.2s ease;">
-                        <span>{{ team }}</span>
-                        <svg style="width: 16px; height: 16px; color: #ced4da;" fill="currentColor" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-                        </svg>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- Back Button -->
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="{{ url_for('home') }}" 
-                   style="display: inline-flex; 
-                        align-items: center;
-                        padding: 12px 24px; 
-                        background: #5e72e4;
-                        color: white; 
-                        text-decoration: none; 
-                        border-radius: 6px; 
-                        font-weight: 500;
-                        transition: all 0.2s ease;
-                        box-shadow: 0 4px 6px rgba(94,114,228,.11),
-                                   0 1px 3px rgba(0,0,0,.08);">
-                    <svg style="width: 18px; height: 18px; margin-right: 8px;" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
-                    </svg>
-                    Back to Overview
-                </a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Directory</title>
+  <style>
+    /* Base Styles */
+    body {
+      background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740073133/terrorcons-3840x2160-11912-Photoroom_afpxqz.png) center/cover no-repeat;
+      background-color: rgba(0, 0, 0, 0.425);
+      background-blend-mode: darken;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #2d2d2d;
+      line-height: 1.6;
+    }
+    
+    .container {
+      min-height: 80vh;
+      padding: 40px 20px;
+    }
+    
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Header Section */
+    .header-section {
+      background: rgba(255, 255, 255, 0.65);
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .header-section h1 {
+      margin: 0;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #1a365d;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+    
+    /* Card Container */
+    .card-container {
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.04),
+                  0 1px 3px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+    }
+    
+    /* Error Message */
+    .error-message {
+      background: #fff5f5;
+      color: #cc0033;
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid #ffcccc;
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .error-message svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+    }
+    
+    /* Team Grid */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .team-card {
+      background: rgba(255, 255, 255, 0.69);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .team-card a {
+      color: #000;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: color 0.2s ease;
+    }
+    
+    .team-card a svg {
+      width: 16px;
+      height: 16px;
+      color: #ced4da;
+    }
+    
     .team-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 7px 14px rgba(50,50,93,.1),
-                    0 3px 6px rgba(0,0,0,.08);
-        border-color: #e0e7ff;
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1),
+                  0 3px 6px rgba(0, 0, 0, 0.08);
+      border-color: #e0e7ff;
     }
     
     a:hover {
-        color: #5e72e4;
+      color: #5e72e4;
     }
     
     a:hover svg {
-        color: #5e72e4 !important;
+      color: #5e72e4 !important;
     }
     
-    .button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 7px 14px rgba(94,114,228,.2),
-                    0 3px 6px rgba(0,0,0,.08);
+    /* Back Button */
+    .back-button {
+      text-align: center;
+      margin-top: 2rem;
     }
-</style>
+    
+    .back-button a {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 24px;
+      background: #5e72e4;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(94, 114, 228, 0.11),
+                  0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    
+    .back-button a svg {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+    }
+    
+    .back-button a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 14px rgba(94, 114, 228, 0.2),
+                  0 3px 6px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .header-section h1 {
+        font-size: 2.5rem;
+      }
+      
+      .team-card a {
+        font-size: 1.1rem;
+      }
+      
+      .back-button a {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header-section h1 {
+        font-size: 2rem;
+      }
+      
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .team-card {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="content-wrapper">
+        <h1>Team Directory</h1>
+      </div>
+    </div>
+    
+    <div class="content-wrapper">
+      {% if error %}
+      <div class="error-message">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        {{ error }}
+      </div>
+      {% else %}
+      <div class="card-container">
+        <!-- Team Grid -->
+        <div class="team-grid">
+          {% for team in teams.data %}
+          <div class="team-card">
+            <a href="{{ url_for('team_detail', team_id=team) }}">
+              <span>{{ team }}</span>
+              <svg fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        <!-- Back Button -->
+        <div class="back-button">
+          <a href="{{ url_for('home') }}">
+            <svg fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+            Back to Overview
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

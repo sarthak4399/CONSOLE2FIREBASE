@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ team.data[1] }} Dashboard</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-title {
+            font-size: 2.7rem;
+            color: #1a365d;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .header-title { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body style="background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740065370/optimus-prime-4k-pchfbdgnjy8atx6v_ptojik.jpg) center/cover no-repeat; background-color: rgba(0, 0, 0, 0.278); background-blend-mode: darken;">
+    <div class="container">
+        <h1 class="header-title">{{ team.data[1] }} Dashboard</h1>
+        
+        <div style="background: rgba(255, 255, 255, 0.62); border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 2rem;">
+            <div class="grid">
+                <!-- Hand Touches Card -->
+                <div class="card" style="border-left: 4px solid #4299e1;">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Hand Touches</span>
+                    </div>
+                    <div id="handTouchesValue" style="font-size: 2.5rem; text-align: center; font-weight: 600; color: #1a365d;">
+                        {{ team.data[2] }}
+                    </div>
+                </div>
+
+                <!-- Total Time Card -->
+                <div class="card" style="border-left: 4px solid #48bb78;">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Time</span>
+                    </div>
+                    <div id="totalTime" style="font-size: 2.5rem; text-align: center; font-weight: 600; color: #1a365d;">
+                        {{ team.data[3] }}
+                    </div>
+                </div>
+
+                <!-- Total Score Card -->
+                <div class="card" style="border-left: 4px solid #9f7aea;">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Score</span>
+                    </div>
+                    <div id="totalScore" style="font-size: 2.5rem; text-align: center; font-weight: 600; color: #1a365d;">
+                        {{ team.data[4] }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checkpoints Grid -->
+            <div class="grid">
+                {% for i in range(5, 10) %}
+                <div id="checkpoint-{{ i-4 }}" style="background: {{ '#f0fff4' if team.data[i] == 1 else '#faa2a2' }}; padding: 1.5rem; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.2rem; font-weight: 600; color: #1a365d;">Checkpoint {{ i-4 }}</span>
+                        <div style="width: 24px; height: 24px; background: {{ '#48bb78' if team.data[i] == 1 else '#f56565' }}; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <svg style="width: 14px; height: 14px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {% if team.data[i] == 1 %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                {% else %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                {% endif %}
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshTeamData() {
+      const teamId = '{{ team.data[1] }}';  // Get team ID from template
+
+      fetch(`http://192.168.29.254:5000/team/api/${teamId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Received data:', data); // Debug log
+
+          // Update metrics
+          document.getElementById('handTouchesValue').textContent = data.data[2];
+          document.getElementById('totalTime').textContent = data.data[3];
+          document.getElementById('totalScore').textContent = data.data[4];
+
+          // Update checkpoints
+          for (let i = 5; i < 10; i++) {
+            const checkpointElement = document.getElementById(`checkpoint-${i - 4}`);
+            if (!checkpointElement) continue; // Skip if element not found
+
+            const status = data.data[i] === 1;
+
+            // Update background color
+            checkpointElement.style.background = status ? '#f0fff4' : '#fff5f5';
+
+            // Update status text
+            const statusText = checkpointElement.querySelector('.status-text');
+            if (statusText) {
+              statusText.textContent = status ? 'Completed' : 'Pending';
+            }
+
+            // Update status icon
+            const statusIcon = checkpointElement.querySelector('svg');
+            if (statusIcon) {
+              const iconParent = statusIcon.parentElement;
+              iconParent.style.background = status ? '#48bb78' : '#f56565';
+              statusIcon.innerHTML = status ?
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+            }
+          }
+          
+        })
+        .catch(error => {
+          console.error('Error refreshing data:', error);
+          
+        });
+        
+    }
+    </script>
+</body>
+</html>

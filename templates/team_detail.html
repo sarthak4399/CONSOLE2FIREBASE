@@ -1,206 +1,344 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive meta tag for smartphones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ team.data[1] }} Performance Dashboard</title>
+  <style>
+    /* Global container for content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* Grid for key metric cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Card common styling */
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Header styling */
+    .header-title {
+      font-size: 2.7rem;
+      color: #1a365d;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Button styling */
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Media query for smartphones */
+    @media (max-width: 600px) {
+      .header-title {
+        font-size: 2rem;
+        text-align: center;
+        justify-content: center;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+      }
+      input[type="number"] {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body
+  style="background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740065370/optimus-prime-4k-pchfbdgnjy8atx6v_ptojik.jpg) center/cover no-repeat; background-color: rgba(0, 0, 0, 0.278); background-blend-mode: darken;">
+  <div class="container">
+    <!-- Header Section -->
+    <div style="margin-bottom: 2.5rem;">
+      <h1 class="header-title">
+        <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+          </path>
+        </svg>
+        {{ team.data[1] }} Performance Dashboard
+      </h1>
+      <div style="height: 4px; width: 33px; background: #4299e1; border-radius: 2px;"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div
+      style="background: rgba(255, 255, 255, 0.62); border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 2rem; margin-top: 8%;">
+      {% if error %}
+      <div
+        style="background: #fff5f5bc; color: #c53030; padding: 1rem; border-radius: 8px; border-left: 4px solid #c53030; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+        <svg style="flex-shrink: 0; width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+          </path>
+        </svg>
+        {{ error }}
+      </div>
+      {% else %}
+      <!-- Key Metrics Grid -->
+      <div class="grid">
+        <!-- Hand Touches Card with + and - buttons -->
+        <div class="card" style="border-left: 4px solid #4299e1;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <svg style="width: 24px; height: 24px; color: #4299e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Hand Touches</span>
+          </div>
+          <!-- Display the current hand touches value -->
+          <div id="handTouchesValue"
+            style="font-size: 1.875rem; display: flex; justify-content: center; align-items: center; font-weight: 600; color: #1a365d;">
+            {{ team.data[2] }}
+          </div>
+          <!-- Buttons to increment/decrement hand touches -->
+          <div style="display: flex; align-items: center; justify-content: center; margin-top: 0.5rem;">
+            <button onclick="updateHandTouches(true)" style="background: #48bb78; color: white; margin-right: 0.5rem;">+</button>
+            <button onclick="updateHandTouches(false)" style="background: #f56565; color: white;">–</button>
+          </div>
+        </div>
+
+        <!-- Total Time Card -->
+        <div class="card" style="border-left: 4px solid #48bb78;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; justify-content: center; margin-bottom: 1rem;">
+            <svg style="width: 24px; height: 24px; color: #48bb78;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Time</span>
+          </div>
+          <div id="totalTime"
+            style="display: flex; justify-content: center; align-items: center; font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+            {{ team.data[3] }}
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;">
+            <input type="number" id="timeInput" step="0.1"
+              style="padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 4px; width: 100px;" placeholder="Enter time">
+            <button onclick="updateTime()" style="background: #48bb78; color: white;">Update Time</button>
+          </div>
+        </div>
+
+        <!-- Total Score Card -->
+        <div class="card" style="border-left: 4px solid #9f7aea;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Score</span>
+          </div>
+          <div id="totalScore"
+            style="display: flex; justify-content: center; align-items: center; font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+            {{ team.data[4] }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkpoints Section -->
+      <div style="margin-bottom: 3rem;">
+        <h2 style="font-size: 2rem; color: #1a365d; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+          <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+            </path>
+          </svg>
+          Checkpoint Status
+        </h2>
+        <div class="grid">
+          {% for i in range(5, 10) %}
+          <div id="checkpoint-{{ i-4 }}"
+            style="background: {{ '#f0fff4' if team.data[i] == 1 else '#faa2a2' }}; padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span style="font-size: 1rem; font-weight: 600; color: #1a365d;">Checkpoint {{ i-4 }}</span>
+              <div style="width: 24px; height: 24px; background: {{ '#48bb78' if team.data[i] == 1 else '#f56565' }}; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <svg style="width: 14px; height: 14px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {% if team.data[i] == 1 %}
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 13l4 4L19 7"></path>
+                  {% else %}
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"></path>
+                  {% endif %}
+                </svg>
+              </div>
+            </div>
+            <div class="status-text">
+              {{ 'Completed' if team.data[i] == 1 else 'Pending' }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <div style="text-align: center;">
+        <a href="{{ url_for('teams') }}"
+          style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; background: #4299e1; color: white; text-decoration: none; border-radius: 6px; transition: all 0.2s ease;">
+          <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+          </svg>
+          Back to Teams
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- JavaScript remains unchanged -->
+  <script>
     function refreshTeamData() {
-        const teamId = '{{ team.data[1] }}';  // Get team ID from template
-        
-        fetch(`http://192.0.0.2:5000/team/api/${teamId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Received data:', data); // Debug log
+      const teamId = '{{ team.data[1] }}';  // Get team ID from template
 
-                // Update metrics
-                document.getElementById('handTouchesValue').textContent = data.data[2];
-                document.getElementById('totalTime').textContent = data.data[3];
-                document.getElementById('totalScore').textContent = data.data[4];
+      fetch(`http://192.168.29.254:5000/team/api/${teamId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Received data:', data); // Debug log
 
-                // Update checkpoints
-                for (let i = 5; i < 10; i++) {
-                    const checkpointElement = document.getElementById(`checkpoint-${i-4}`);
-                    if (!checkpointElement) continue; // Skip if element not found
-                    
-                    const status = data.data[i] === 1;
-                    
-                    // Update background color
-                    checkpointElement.style.background = status ? '#f0fff4' : '#fff5f5';
-                    
-                    // Update status text
-                    const statusText = checkpointElement.querySelector('.status-text');
-                    if (statusText) {
-                        statusText.textContent = status ? 'Completed' : 'Pending';
-                    }
+          // Update metrics
+          document.getElementById('handTouchesValue').textContent = data.data[2];
+          document.getElementById('totalTime').textContent = data.data[3];
+          document.getElementById('totalScore').textContent = data.data[4];
 
-                    // Update status icon
-                    const statusIcon = checkpointElement.querySelector('svg');
-                    if (statusIcon) {
-                        const iconParent = statusIcon.parentElement;
-                        iconParent.style.background = status ? '#48bb78' : '#f56565';
-                        statusIcon.innerHTML = status ? 
-                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
-                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error refreshing data:', error);
-            });
+          // Update checkpoints
+          for (let i = 5; i < 10; i++) {
+            const checkpointElement = document.getElementById(`checkpoint-${i - 4}`);
+            if (!checkpointElement) continue; // Skip if element not found
+
+            const status = data.data[i] === 1;
+
+            // Update background color
+            checkpointElement.style.background = status ? '#f0fff4' : '#fff5f5';
+
+            // Update status text
+            const statusText = checkpointElement.querySelector('.status-text');
+            if (statusText) {
+              statusText.textContent = status ? 'Completed' : 'Pending';
+            }
+
+            // Update status icon
+            const statusIcon = checkpointElement.querySelector('svg');
+            if (statusIcon) {
+              const iconParent = statusIcon.parentElement;
+              iconParent.style.background = status ? '#48bb78' : '#f56565';
+              statusIcon.innerHTML = status ?
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error refreshing data:', error);
+        });
     }
 
     // New function to update hand touches using POST request
     function updateHandTouches(state) {
-        const teamId = '{{ team.data[1] }}';
-        fetch(`http://192.0.0.2:5000/team/${teamId}/hand_touches`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'setHandTouch',
-                data: {
-                    teamId: teamId,
-                    increment: state
-                }
-            })
+      const teamId = '{{ team.data[1] }}';
+      fetch(`http://192.168.29.254:5000/team/${teamId}/${state}/hand_touches`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'setHandTouch',
+          data: {
+            teamId: teamId,
+            increment: state
+          }
         })
-        .then(response => {
-            console.warn('Hand touches updated:', data);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Hand touches updated:', data);
+        refreshTeamData();
+      })
+      .catch(error => {
+        console.error('Error updating hand touches:', error);
+        alert('Failed to update hand touches: ' + error.message);
+      });
+    }
 
+    async function updateTime() {
+      const teamId = '{{ team.data[1] }}';
+      const timeInput = document.getElementById('timeInput');
+      const newTime = parseFloat(timeInput.value);
+
+      if (isNaN(newTime)) {
+        alert('Please enter a valid number');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://192.168.29.254:5000/team/${teamId}/time`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'setTime',
+            data: {
+              teamId: teamId,
+              totalTime: newTime
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Hand touches updated:', data);
-            // Optionally, refresh the dashboard after updating
-            refreshTeamData();
-        })
-        .catch(error => {
-            console.error('Error updating hand touches:', error);
+          })
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Time updated:', data);
+
+        // Clear input and refresh data
+        timeInput.value = '';
+        refreshTeamData();
+
+      } catch (error) {
+        console.error('Error updating time:', error);
+        alert('Failed to update time: ' + error.message);
+      }
     }
 
     // Start refreshing when the page loads
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('Starting refresh cycle...'); // Debug log
-        refreshTeamData(); // Initial refresh
-        setInterval(refreshTeamData, 2000); // Refresh every 2 seconds
+      console.log('Starting refresh cycle...'); // Debug log
+      refreshTeamData(); // Initial refresh
+      setInterval(refreshTeamData, 1000);
     });
-</script>
-
-<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; font-family: 'Segoe UI', system-ui, sans-serif;">
-    <!-- Header Section -->
-    <div style="margin-bottom: 2.5rem;">
-        <h1 style="font-size: 2.5rem; color: #1a365d; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem;">
-            <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
-            {{ team.data[1] }} Performance Dashboard
-        </h1>
-        <div style="height: 4px; width: 60px; background: #4299e1; border-radius: 2px;"></div>
-    </div>
-
-    <!-- Main Content -->
-    <div style="background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 2rem;">
-        {% if error %}
-        <div style="background: #fff5f5; color: #c53030; padding: 1rem; border-radius: 8px; border-left: 4px solid #c53030; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
-            <svg style="flex-shrink: 0; width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-            {{ error }}
-        </div>
-        {% else %}
-        <!-- Key Metrics Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
-            <!-- Hand Touches Card with + and - buttons -->
-            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4299e1;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <svg style="width: 24px; height: 24px; color: #4299e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    <span style="font-size: 0.875rem; color: #718096;">Hand Touches</span>
-                </div>
-                <!-- Display the current hand touches value -->
-                <div id="handTouchesValue" style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
-                    {{ team.data[2] }}
-                </div>
-                <!-- Buttons to increment/decrement hand touches -->
-                <div style="margin-top: 0.5rem;">
-                    <button onclick="updateHandTouches(true)" style="padding: 0.5rem 1rem; margin-right: 0.5rem; background: #48bb78; color: white; border: none; border-radius: 4px; cursor: pointer;">+</button>
-                    <button onclick="updateHandTouches(false)" style="padding: 0.5rem 1rem; background: #f56565; color: white; border: none; border-radius: 4px; cursor: pointer;">–</button>
-                </div>
-            </div>
-
-            <!-- Total Time Card -->
-            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #48bb78;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <svg style="width: 24px; height: 24px; color: #48bb78;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span style="font-size: 0.875rem; color: #718096;" id="totalTime">Total Time</span>
-                </div>
-                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
-                    {{ team.data[3] }}
-                </div>
-            </div>
-
-            <!-- Total Score Card -->
-            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #9f7aea;">
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                    <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span style="font-size: 0.875rem; color: #718096;" id="totalScore">Total Score</span>
-                </div>
-                <div style="font-size: 1.875rem; font-weight: 600; color: #1a365d;">
-                    {{ team.data[4] }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Checkpoints Section -->
-        <div style="margin-bottom: 3rem;">
-            <h2 style="font-size: 1.25rem; color: #1a365d; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-                Checkpoint Status
-            </h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
-                {% for i in range(5, 10) %}
-                <div id="checkpoint-{{ i-4 }}" style="background: {{ '#f0fff4' if team.data[i] == 1 else '#fff5f5' }};">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.875rem; color: #718096;">Checkpoint {{ i-4 }}</span>
-                        <div style="width: 24px; height: 24px; background: {{ '#48bb78' if team.data[i] == 1 else '#f56565' }}; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                            <svg style="width: 14px; height: 14px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {% if team.data[i] == 1 %}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                {% else %}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                {% endif %}
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="status-text">
-                        {{ 'Completed' if team.data[i] == 1 else 'Pending' }}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Back Button -->
-        <div style="text-align: center;">
-            <a href="{{ url_for('teams') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; background: #4299e1; color: white; text-decoration: none; border-radius: 6px; transition: all 0.2s ease;">
-                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
-                </svg>
-                Back to Teams
-            </a>
-        </div>
-        {% endif %}
-    </div>
-</div>
+  </script>
+</body>
+</html>

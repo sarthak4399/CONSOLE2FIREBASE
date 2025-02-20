@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Add other head elements here -->
+</head>
+
+<body style="background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740065370/optimus-prime-4k-pchfbdgnjy8atx6v_ptojik.jpg) center/cover no-repeat; background-color: rgba(0, 0, 0, 0.278); background-blend-mode: darken;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem 5%; font-family: 'Segoe UI', system-ui, sans-serif;">
+        <!-- Header Section -->
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; color: #1a365d; margin-bottom: 0.1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <svg style="width: 28px; height: 28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- SVG path -->
+                </svg>
+                {{ team.data[1] }} Dashboard
+            </h1>
+            <div style="height: 3px; width: 28px; background: #4299e1; border-radius: 2px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div style="background: rgba(255, 255, 255, 0.619); border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 1.5rem;">
+            <!-- Key Metrics Grid -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <!-- Metric Cards (same structure but with mobile adjustments) -->
+                <div style="padding: 1rem; border-radius: 8px;">
+                    <!-- Content -->
+                    <div style="font-size: 1.5rem;" id="handTouchesValue">{{ team.data[2] }}</div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <button style="padding: 0.5rem 1.5rem; font-size: 1rem;">+</button>
+                        <button style="padding: 0.5rem 1.5rem; font-size: 1rem;">–</button>
+                    </div>
+                </div>
+                
+                <!-- Repeat for other metric cards -->
+            </div>
+
+            <!-- Checkpoints Section -->
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Checkpoint Status</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">
+                    <!-- Checkpoint cards -->
+                    <div style="padding: 1rem;">
+                        <!-- Content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div style="text-align: center;">
+                <a href="{{ url_for('teams') }}" style="padding: 0.75rem 1.25rem; font-size: 1rem;">
+                    Back to Teams
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 640px) {
+            /* Tablet+ Styles */
+            .metric-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            /* Desktop Styles */
+            .metric-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .checkpoint-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Mobile-specific adjustments */
+            body {
+                background-image: none;
+                background-color: #f0f4f8;
+            }
+            
+            .main-container {
+                padding: 1rem;
+                margin-top: 5%;
+            }
+            
+            button, .button {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            
+            input[type="number"] {
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>

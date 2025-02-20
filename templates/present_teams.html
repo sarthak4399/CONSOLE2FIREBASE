@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teams Presentation View</title>
+  <style>
+    body {
+      background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740073133/terrorcons-3840x2160-11912-Photoroom_afpxqz.png) center/cover no-repeat;
+      background-color: rgba(0, 0, 0, 0.425);
+      background-blend-mode: darken;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #2d2d2d;
+      line-height: 1.6;
+    }
+    
+    .container {
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .content-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header-section {
+      background: rgba(255, 255, 255, 0.65);
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .header-section h1 {
+      margin: 0;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #1a365d;
+      text-align: center;
+    }
+    
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 12px;
+    }
+    
+    .team-card {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .team-name {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #1a365d;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .header-section h1 {
+        font-size: 2.5rem;
+      }
+      .team-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-section">
+      <div class="content-wrapper">
+        <h1>Teams Dashboard</h1>
+      </div>
+    </div>
+    
+    <div class="content-wrapper">
+      <div class="team-grid">
+        {% for team in teams.data %}
+        <div class="team-card" onclick="window.location.href='/present/{{ team }}'">
+          <div class="team-name">{{ team }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto refresh every 5 seconds
+    function refreshPage() {
+      fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const newDoc = parser.parseFromString(html, 'text/html');
+          const newGrid = newDoc.querySelector('.team-grid');
+          const currentGrid = document.querySelector('.team-grid');
+          if (newGrid && currentGrid) {
+            currentGrid.innerHTML = newGrid.innerHTML;
+          }
+        })
+        .catch(error => console.error('Error refreshing:', error));
+    }
+
+    // Start refreshing when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      setInterval(refreshPage, 5000);
+    });
+  </script>
+</body>
+</html>
