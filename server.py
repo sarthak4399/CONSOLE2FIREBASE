@@ -19,13 +19,11 @@ def home():
             "action": "getTeamId",
             "data": {}
         })
-        teams_data = response.json()
-        # Ensure teams_data is a list
-        teams = teams_data if isinstance(teams_data, list) else []
-        return render_template('base.html', teams=teams)
+        teams = response.json()
+        print(teams)
+        return render_template('teams.html', teams=teams)
     except Exception as e:
-        print(f"Error: {str(e)}")  # Debug print
-        return render_template('base.html', teams=[], error=str(e))
+        return render_template('teams.html', teams={}, error=str(e))
 
 
 @app.route('/teams')

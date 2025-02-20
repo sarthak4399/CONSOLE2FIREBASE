@@ -151,6 +151,11 @@
         });
         
     }
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Starting refresh cycle...'); // Debug log
+      refreshTeamData(); // Initial refresh
+      setInterval(refreshTeamData, 1000);
+    });
     </script>
 </body>
 </html>
