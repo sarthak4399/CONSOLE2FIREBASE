@@ -5,37 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ team.data[1] }} Dashboard</title>
     <style>
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #4299e1;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+            --purple-color: #9f7aea;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: url(https://res.cloudinary.com/ds1brunxe/image/upload/v1740065370/optimus-prime-4k-pchfbdgnjy8atx6v_ptojik.jpg) center/cover fixed no-repeat;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: darken;
+            min-height: 100vh;
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem 1rem;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .header-title {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+
+        .dashboard-content {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
             margin-bottom: 3rem;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .header-title {
-            font-size: 2.7rem;
-            color: #1a365d;
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
             text-align: center;
-            margin-bottom: 2rem;
         }
 
-        @media (max-width: 600px) {
-            .header-title { font-size: 2rem; }
-            .grid { grid-template-columns: 1fr; }
+        .checkpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .checkpoint-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .checkpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkpoint-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .status-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header-title { font-size: 2.5rem; }
+            .card-value { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -67,13 +166,38 @@
 
                 <!-- Total Score Card -->
                 <div class="card" style="border-left: 4px solid #9f7aea;">
-                    <div style="text-align: center; margin-bottom: 1rem;">
-                        <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Score</span>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                      <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Score</span>
                     </div>
-                    <div id="totalScore" style="font-size: 2.5rem; text-align: center; font-weight: 600; color: #1a365d;">
-                        {{ team.data[4] }}
+                    <div id="totalScore"
+                      style="display: flex; justify-content: center; align-items: center; font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+                      {{ team.data[4] }}
                     </div>
+                  </div>
+                  
+                  <div class="card" style="border-left: 4px solid #9f7aea;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                      <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Skips</span>
+                    </div>
+                    <div id="subscroe"
+                      style="display: flex; justify-content: center; align-items: center; font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+                      {{ team.data[10] }}
+                    </div>
+                    <!-- <div style="display: flex; align-items: center; justify-content: center; margin-top: 0.5rem;">
+                      <button onclick="UpdateScrSubstracotr(true)" style="background: #48bb78; color: white; margin-right: 0.5rem;">+</button>
+                      <button onclick="UpdateScrSubstracotr(false)" style="background: #f56565; color: white;">–</button>
+                    </div> -->
+                  </div>
                 </div>
+              </div>
             </div>
 
             <!-- Checkpoints Grid -->
@@ -116,6 +240,7 @@
           document.getElementById('handTouchesValue').textContent = data.data[2];
           document.getElementById('totalTime').textContent = data.data[3];
           document.getElementById('totalScore').textContent = data.data[4];
+          document.getElementById('subscroe').textContent = data.data[10];
 
           // Update checkpoints
           for (let i = 5; i < 10; i++) {

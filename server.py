@@ -5,6 +5,8 @@ import requests
 from flask import Flask, request, jsonify ,render_template
 from flask_cors import CORS
 APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwU6vJffMsCWOKeOJ2seXnIysd44V3HhXJM3koOtY2A4oGyEALt7R3IPNUS5xsmgWGW/exec"
+APPS_SCRIPT_URL_1 = "https://script.google.com/macros/s/AKfycbyYrgclOOEFr5RtXhO-Mn8iA-nzDO3__Nx3ewUJD7-iQYnRWabfzXo7Zgk8t5f-hH4/exec"
+APPS_SCRIPT_URL_2 = "https://script.google.com/macros/s/AKfycbyPX6Z3O2gmsDw1NZY-YkM1fDVfHr4dEIHCKlBBtZAC4TETmvIr-xZUbQVCZuej3U65Dg/exec"
 app = Flask(__name__)
 CORS(app) 
 currentTeam = None
@@ -48,7 +50,7 @@ def team_api(team_id):
     Display specific team details
     """
     try:
-        response = requests.post(APPS_SCRIPT_URL, json={
+        response = requests.post(APPS_SCRIPT_URL_2, json={
             "action": "getTeamData",
             "data": {"teamId": team_id}
         })
@@ -126,7 +128,7 @@ def update_time(team_id):
         if total_time is None:
             raise ValueError("totalTime is required in request data")
         print(f"Updating time for team {team_id}: {total_time}")
-        response = requests.post(APPS_SCRIPT_URL, json={
+        response = requests.post(APPS_SCRIPT_URL_1, json={
             "action": "setTime",
             "data": {
                 "teamId": team_id,
@@ -169,7 +171,7 @@ def getTeamId():
         print("Error retrieving team data:", e)
         return jsonify({"status": "error", "message": str(e)}), 400
 
-    
+
 @app.route('/data', methods=['POST'])
 def receive_data(increment):
     """
@@ -179,7 +181,7 @@ def receive_data(increment):
     try:
         data = request.get_json()
         print("Received data:", data)
-        response = requests.post(APPS_SCRIPT_URL, json={
+        response = requests.post(APPS_SCRIPT_URL_2, json={
             "action": "setCheckPoints",
             "data": {
                     "teamId": currentTeam,
@@ -206,7 +208,7 @@ def receive_data_esp():
     try:
         data = request.get_json()
         print("Received data:", data)
-        response = requests.post(APPS_SCRIPT_URL, json={
+        response = requests.post(APPS_SCRIPT_URL_2, json={
             "action": "setCheckPoints",
             "data": {
                     "teamId": currentTeam,
@@ -272,7 +274,7 @@ def scrup(team_id, state):
         print(f"Request data: {request_data}")
         
         # Make API request
-        response = requests.post(APPS_SCRIPT_URL, json={
+        response = requests.post(APPS_SCRIPT_URL_1, json={
             "action": "setScrSubstractor",
             "data": {
                 "teamId": team_id,
