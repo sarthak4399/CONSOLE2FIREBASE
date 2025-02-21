@@ -154,7 +154,26 @@
             {{ team.data[4] }}
           </div>
         </div>
+        
+        <div class="card" style="border-left: 4px solid #9f7aea;">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <svg style="width: 24px; height: 24px; color: #9f7aea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span style="font-size: 1.275rem; color: #1a365d; font-weight: 700;">Total Skips</span>
+          </div>
+          <div id="subscroe"
+            style="display: flex; justify-content: center; align-items: center; font-size: 1.875rem; font-weight: 600; color: #1a365d;">
+            {{ team.data[10] }}
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; margin-top: 0.5rem;">
+            <button onclick="UpdateScrSubstracotr(true)" style="background: #48bb78; color: white; margin-right: 0.5rem;">+</button>
+            <button onclick="UpdateScrSubstracotr(false)" style="background: #f56565; color: white;">–</button>
+          </div>
+        </div>
       </div>
+    </div>
 
       <!-- Checkpoints Section -->
       <div style="margin-bottom: 3rem;">
@@ -212,7 +231,7 @@
     function refreshTeamData() {
       const teamId = '{{ team.data[1] }}';  // Get team ID from template
 
-      fetch(`http://192.168.29.254:5000/team/api/${teamId}`)
+      fetch(`http://192.168.77.92:5000/team/api/${teamId}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -226,6 +245,7 @@
           document.getElementById('handTouchesValue').textContent = data.data[2];
           document.getElementById('totalTime').textContent = data.data[3];
           document.getElementById('totalScore').textContent = data.data[4];
+          document.getElementById('subscroe').textContent = data.data[10];
 
           // Update checkpoints
           for (let i = 5; i < 10; i++) {
@@ -262,7 +282,7 @@
     // New function to update hand touches using POST request
     function updateHandTouches(state) {
       const teamId = '{{ team.data[1] }}';
-      fetch(`http://192.168.29.254:5000/team/${teamId}/${state}/hand_touches`, {
+      fetch(`http://192.168.77.92:5000/team/${teamId}/${state}/hand_touches`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -290,6 +310,38 @@
         alert('Failed to update hand touches: ' + error.message);
       });
     }
+    function UpdateScrSubstracotr(state){
+      const teamId = '{{ team.data[1] }}';
+      fetch(`http://192.168.77.92:5000/team/${teamId}/${state}/scrup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'setScrSubstractor',
+          data: {
+            teamId: teamId,
+            increment: state
+          }
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Score updated:', data);
+        refreshTeamData();
+      })
+      .catch(error => {
+        console.error('Error updating score:', error);
+        alert('Failed to update score: ' + error.message);
+      });
+    }
+
+
 
     async function updateTime() {
       const teamId = '{{ team.data[1] }}';
@@ -302,7 +354,7 @@
       }
 
       try {
-        const response = await fetch(`http://192.168.29.254:5000/team/${teamId}/time`, {
+        const response = await fetch(`http://192.168.77.92:5000/team/${teamId}/time`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

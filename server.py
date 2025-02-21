@@ -254,5 +254,54 @@ def present(team_id):
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
     
+@app.route('/team/<team_id>/<state>/scrup', methods=['POST'])
+def scrup(team_id, state):
+    """
+    Update score for a specific team
+    Args:
+        team_id: The team identifier
+        state: Boolean string ('true' or 'false') for increment/decrement
+    """
+    try:
+        # Validate input
+        increment = state.lower() == 'true'
+        request_data = request.get_json()
+        
+        # Log request details
+        print(f"Received request for team {team_id}, state: {state}")
+        print(f"Request data: {request_data}")
+        
+        # Make API request
+        response = requests.post(APPS_SCRIPT_URL, json={
+            "action": "setScrSubstractor",
+            "data": {
+                "teamId": team_id,
+                "increment": increment
+            }
+        })
+        
+        # Check response status
+        if not response.ok:
+            raise Exception(f"Apps Script returned status code: {response.status_code}")
+            
+        # Try to parse JSON response
+        try:
+            result = response.json()
+            return jsonify(result), 200
+        except json.JSONDecodeError as je:
+            print(f"Invalid JSON response: {response.text}")
+            return jsonify({
+                "status": "error",
+                "message": "Invalid response from server",
+                "details": str(je)
+            }), 500
+
+    except Exception as e:
+        print(f"Error in scrup: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 400
+    
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.29.254')
+    app.run(debug=True, host='192.168.77.92')

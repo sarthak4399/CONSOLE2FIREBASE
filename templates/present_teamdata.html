@@ -102,7 +102,7 @@
         function refreshTeamData() {
       const teamId = '{{ team.data[1] }}';  // Get team ID from template
 
-      fetch(`http://192.168.29.254:5000/team/api/${teamId}`)
+      fetch(`http://192.168.77.92:5000/team/api/${teamId}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
